@@ -1,0 +1,11 @@
+{
+  "name": "workoutplanner",
+  "version": "1.0.0",
+  "description": "An api that suggests workout based on search requests",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
