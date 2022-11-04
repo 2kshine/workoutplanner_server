@@ -4,7 +4,8 @@ require("dotenv").config();
 //importing required modules
 const express = require("express");
 const mongoose = require("mongoose");
-const workoutVideoRoutes = require('./routes/workoutVideoRoutes');
+const workoutVideoRoutes = require("./routes/workoutVideoRoutes");
+const userRouter = require("./routes/userRoutes");
 
 //express application
 const app = express();
@@ -13,14 +14,15 @@ const app = express();
 const PORT = process.env.PORT;
 
 //middlewares
-app.use((req, res, next) =>{
-    console.log(req.path, req.method);
-    next();
-})
+app.use((req, res, next) => {
+  console.log(req.path, req.method);
+  next();
+});
 app.use(express.json());
 
 //Routes
-app.use('/api/v1/workoutVideos/', workoutVideoRoutes)
+app.use("/api/v1/workoutVideos/", workoutVideoRoutes);
+app.use("/api/v1/users/", userRouter);
 
 //connecting to the database
 mongoose
