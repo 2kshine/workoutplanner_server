@@ -6,14 +6,36 @@ const express = require("express");
 const mongoose = require("mongoose");
 const workoutVideoRoutes = require("./routes/workoutVideoRoutes");
 const userRouter = require("./routes/userRoutes");
+const session = require("express-session");
+const redis = require("redis");
+let RedisStore = require("connect-redis")(session);
 
-//express application
+//wiring up redis session
+let redisClient = redis.createClient({
+  host: process.env.REDIS_URL,
+  port: process.env.REDIS_PORT,
+});
+
+//express applicationd
 const app = express();
 
 //Port mapping
 const PORT = process.env.PORT;
 
 //middlewares
+app.use(
+  session({
+    store: new RedisStore({ client: redisClient }),
+    secret: process.env.SESSION_SECRET,
+    cookie: {
+      secure: false,
+      resave:false,
+      saveUninitialized:false,
+      httpOnly: true,
+      maxAge: 30000,
+    },
+  })
+);
 app.use((req, res, next) => {
   console.log(req.path, req.method);
   next();
@@ -24,7 +46,7 @@ app.use(express.json());
 app.use("/api/v1/workoutVideos/", workoutVideoRoutes);
 app.use("/api/v1/users/", userRouter);
 
-//connecting to the database
+//connecting to the database and starting server
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
