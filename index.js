@@ -8,6 +8,8 @@ const workoutVideoRoutes = require("./routes/workoutVideoRoutes");
 const userRouter = require("./routes/userRoutes");
 const session = require("express-session");
 const redis = require("redis");
+const cors = require("cors")
+
 let RedisStore = require("connect-redis")(session);
 
 //wiring up redis session
@@ -23,6 +25,8 @@ const app = express();
 const PORT = process.env.PORT;
 
 //middlewares
+app.enable("trust proxy")
+app.use(cors({}))
 app.use(
   session({
     store: new RedisStore({ client: redisClient }),
@@ -43,6 +47,11 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 //Routes
+app.get("/api/v1", (req, res)=>{
+    res.send("Jeee")
+    console.log("yeah it ran");
+});
+    
 app.use("/api/v1/workoutVideos/", workoutVideoRoutes);
 app.use("/api/v1/users/", userRouter);
 
