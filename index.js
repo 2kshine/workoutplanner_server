@@ -1,5 +1,8 @@
 //environment variables
-require("dotenv").config();
+if(NODE_ENV =='development'){
+    require("dotenv").config();
+}
+
 
 //importing required modules
 const express = require("express");
@@ -14,15 +17,15 @@ let RedisStore = require("connect-redis")(session);
 
 //wiring up redis session
 let redisClient = redis.createClient({
-  host: process.env.REDIS_URL,
-  port: process.env.REDIS_PORT,
+  host: process.env.REDIS_URL || REDIS_URI,
+  port: process.env.REDIS_PORT || REDIS_PORT,
 });
 
 //express applicationd
 const app = express();
 
 //Port mapping
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 //middlewares
 app.enable("trust proxy")
@@ -30,7 +33,7 @@ app.use(cors({}))
 app.use(
   session({
     store: new RedisStore({ client: redisClient }),
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || SESSION_SECRET,
     cookie: {
       secure: false,
       resave:false,
@@ -55,9 +58,12 @@ app.get("/api/v1", (req, res)=>{
 app.use("/api/v1/workoutVideos/", workoutVideoRoutes);
 app.use("/api/v1/users/", userRouter);
 
+//MONGO URI
+//const mongoURL = `mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}@workoutvideos.al9mtwj.mongodb.net/?retryWrites=true&w=majority`
+
 //connecting to the database and starting server
 mongoose
-  .connect(process.env.MONGO_URI, {
+  .connect(process.env.MONGO_URI || MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
